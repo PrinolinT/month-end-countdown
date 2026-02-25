@@ -2,60 +2,78 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-html, body {
+html,body{
 margin:0;
 height:100%;
-font-family:Arial, sans-serif;
-background: url("/month-end-countdown/background.jpg") no-repeat center center fixed;
-background-size: contain;
-background-color: black;
+font-family:"Proxima Nova", Arial, sans-serif;
+background:url("/month-end-countdown/background.jpg") no-repeat center center fixed;
+background-size:contain;
+background-color:black;
 }
 
-.wrapper {
+.wrap{
 height:100%;
 display:flex;
 justify-content:center;
 align-items:center;
 }
 
-.card {
+.card{
 background:rgba(0,0,0,0.6);
-padding:25px;
-border-radius:20px;
+padding:28px;
+border-radius:22px;
 color:white;
 text-align:center;
-width:80%;
-max-width:360px;
+width:85%;
+max-width:380px;
+backdrop-filter: blur(6px);
 }
 
-.time {
-font-size:34px;
-font-weight:bold;
-margin:10px 0;
+.title{
+letter-spacing:2px;
+font-size:14px;
+opacity:.85;
 }
 
-.bar {
+.time{
+font-size:40px;
+font-weight:700;
+margin:14px 0;
+}
+
+.bar{
 height:12px;
 background:#333;
 border-radius:8px;
 overflow:hidden;
 }
 
-.fill {
+.fill{
 height:100%;
 width:0%;
 background:#FFD200;
+transition:width .5s linear;
+}
+
+.urgent .fill{ background:#ff3b3b; }
+.urgent .time{ color:#ff3b3b; }
+
+.closed{
+font-size:32px;
+font-weight:700;
+color:#FFD200;
 }
 </style>
 </head>
 
 <body>
 
-<div class="wrapper">
+<div class="wrap">
 <div class="card">
 
-<h3>MONTH END COUNTDOWN</h3>
+<div class="title">MONTH END COUNTDOWN</div>
 <div class="time" id="t"></div>
 
 <div class="bar">
@@ -66,26 +84,55 @@ background:#FFD200;
 </div>
 
 <script>
-function sa(){
+function saNow(){
 return new Date(new Date().toLocaleString("en-US",{timeZone:"Africa/Johannesburg"}));
 }
 
-function run(){
-const n=sa();
-const s=new Date(n.getFullYear(),n.getMonth(),1);
-const e=new Date(n.getFullYear(),n.getMonth()+1,0,23,59,59);
-const d=e-n;
+// find last Friday of month
+function lastFriday(year,month){
+let d = new Date(year, month+1, 0); // last day of month
+while(d.getDay() !== 5){
+d.setDate(d.getDate()-1);
+}
+d.setHours(17,0,0,0);
+return d;
+}
 
-const dd=Math.floor(d/86400000);
-const hh=Math.floor(d/3600000)%24;
-const mm=Math.floor(d/60000)%60;
-const ss=Math.floor(d/1000)%60;
+function run(){
+const now = saNow();
+const year = now.getFullYear();
+const month = now.getMonth();
+
+const cutoff = lastFriday(year,month);
+
+let nextCutoff = cutoff;
+
+if(now > cutoff){
+nextCutoff = lastFriday(year,month+1);
+}
+
+const diff = nextCutoff - now;
+
+if(diff <= 0){
+document.getElementById("t").innerHTML = "CLOSED";
+return;
+}
+
+const d=Math.floor(diff/86400000);
+const h=Math.floor(diff/3600000)%24;
+const m=Math.floor(diff/60000)%60;
+const s=Math.floor(diff/1000)%60;
 
 document.getElementById("t").innerHTML =
-`${dd}d ${hh}h ${mm}m ${ss}s`;
+`${d}d ${h}h ${m}m ${s}s`;
 
-const pct=((n-s)/(e-s))*100;
+const start = new Date(nextCutoff.getFullYear(), nextCutoff.getMonth(),1);
+const pct=((now-start)/(nextCutoff-start))*100;
 document.getElementById("f").style.width=pct+"%";
+
+if(d<=3){
+document.querySelector(".card").classList.add("urgent");
+}
 }
 
 setInterval(run,1000);
