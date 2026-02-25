@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+html,body{margin:0;height:100%;background:black;font-family:Arial;}
+
+.bg{
+position:fixed;
+inset:0;
+width:100%;
+height:100%;
+object-fit:contain;
+z-index:-1;
+}
+
+.wrap{
+height:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.box{
+background:rgba(0,0,0,0.55);
+padding:25px;
+border-radius:20px;
+color:white;
+text-align:center;
+width:80%;
+max-width:360px;
+}
+
+.time{font-size:32px;font-weight:bold;margin:10px 0;}
+.bar{height:12px;background:#333;border-radius:8px;overflow:hidden;}
+.fill{height:100%;width:0%;background:#FFD200;}
+</style>
+</head>
+
+<body>
+
+<img src="background.jpg" class="bg">
+
+<div class="wrap">
+<div class="box">
+<h3>MONTH END</h3>
+<div class="time" id="t"></div>
+<div class="bar"><div class="fill" id="f"></div></div>
+</div>
+</div>
+
+<script>
+function sa(){
+return new Date(new Date().toLocaleString("en-US",{timeZone:"Africa/Johannesburg"}));
+}
+function run(){
+const n=sa();
+const s=new Date(n.getFullYear(),n.getMonth(),1);
+const e=new Date(n.getFullYear(),n.getMonth()+1,0,23,59,59);
+const d=e-n;
+
+const dd=Math.floor(d/86400000);
+const hh=Math.floor(d/3600000)%24;
+const mm=Math.floor(d/60000)%60;
+const ss=Math.floor(d/1000)%60;
+
+document.getElementById("t").innerHTML=`${dd}d ${hh}h ${mm}m ${ss}s`;
+const pct=((n-s)/(e-s))*100;
+document.getElementById("f").style.width=pct+"%";
+}
+setInterval(run,1000);
+run();
+</script>
+
+</body>
+</html>
