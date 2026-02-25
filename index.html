@@ -35,8 +35,15 @@ transition:.3s;
 
 .title{
 letter-spacing:2px;
-font-size:13px;
+font-size:14px;
 opacity:.85;
+margin-bottom:6px;
+}
+
+.sub{
+font-size:12px;
+opacity:.7;
+margin-bottom:10px;
 }
 
 .time{
@@ -76,7 +83,7 @@ animation:pulse 1s infinite;
 
 @keyframes pulse{
 0%{transform:scale(1);}
-50%{transform:scale(1.05);}
+50%{transform:scale(1.06);}
 100%{transform:scale(1);}
 }
 
@@ -101,7 +108,9 @@ letter-spacing:3px;
 <div class="wrap">
 <div class="card" id="card">
 
-<div class="title">MONTH END CLOSE</div>
+<div class="title" id="title">BUILD MOMENTUM</div>
+<div class="sub" id="sub">Closes Friday 17:00 (SA)</div>
+
 <div class="time" id="t"></div>
 
 <div class="bar">
@@ -126,6 +135,7 @@ return d;
 }
 
 function run(){
+
 const now = saNow();
 const year = now.getFullYear();
 const month = now.getMonth();
@@ -155,11 +165,32 @@ const start=new Date(cutoff.getFullYear(),cutoff.getMonth(),1);
 const pct=((now-start)/(cutoff-start))*100;
 document.getElementById("f").style.width=pct+"%";
 
-if(d<=3){
-document.getElementById("card").classList.add("urgent");
-}
+let title=document.getElementById("title");
+let sub=document.getElementById("sub");
+let card=document.getElementById("card");
 
-if(d===0){
+// Dynamic performance messaging
+if(d >= 15){
+title.innerHTML="BUILD MOMENTUM";
+sub.innerHTML="Set the pace. Own the month.";
+}
+else if(d >= 8){
+title.innerHTML="STAY ON TARGET";
+sub.innerHTML="Consistency wins. Keep pushing.";
+}
+else if(d >= 4){
+title.innerHTML="PUSH THE CALLS";
+sub.innerHTML="Tighten deals. Increase pressure.";
+}
+else if(d >= 1){
+title.innerHTML="FINAL STRETCH";
+sub.innerHTML="Every deal matters now.";
+card.classList.add("urgent");
+}
+else{
+title.innerHTML="LAST HOURS";
+sub.innerHTML="Close everything possible.";
+card.classList.add("urgent");
 document.getElementById("t").classList.add("pulse");
 }
 }
