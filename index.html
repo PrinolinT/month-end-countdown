@@ -8,27 +8,35 @@ html,body{
 margin:0;
 height:100%;
 font-family:"Proxima Nova", Arial, sans-serif;
-background:url("/month-end-countdown/background-mobile.jpg") no-repeat center center fixed;
-background-size:cover;
 background-color:black;
 overflow:hidden;
 }
 
-/* TV background */
-@media (min-width: 900px){
-body{
-background:url("/month-end-countdown/background-tv.jpg") no-repeat center center fixed;
+/* BACKGROUND IMAGE LAYER */
+body::after{
+content:"";
+position:fixed;
+inset:0;
+z-index:-2;
+background:url("/month-end-countdown/background-mobile.jpg") no-repeat center center;
+background-size:cover;
+}
+
+/* TV BACKGROUND */
+@media (min-width:900px){
+body::after{
+background:url("/month-end-countdown/background-tv.jpg") no-repeat center center;
 background-size:cover;
 }
 }
 
-/* smoky overlay */
+/* SMOKE OVERLAY */
 body::before{
 content:"";
 position:fixed;
 inset:0;
-background:rgba(15,15,15,0.55);
-pointer-events:none;
+z-index:-1;
+background:rgba(15,15,15,0.45);
 }
 
 .wrap{
@@ -47,7 +55,6 @@ text-align:center;
 width:85%;
 max-width:380px;
 backdrop-filter: blur(8px);
-transition:.3s;
 }
 
 .title{
@@ -67,7 +74,6 @@ margin-bottom:10px;
 font-size:44px;
 font-weight:800;
 margin:14px 0;
-transition:.2s;
 }
 
 .bar{
@@ -85,24 +91,24 @@ transition:width .6s linear;
 box-shadow:0 0 12px #FFD200;
 }
 
-/* TV scaling */
-@media (min-width: 900px){
+/* TV SIZE BOOST */
+@media (min-width:900px){
 
 .card{
-max-width:700px;
-padding:50px;
+max-width:720px;
+padding:60px;
 }
 
 .time{
-font-size:90px;
+font-size:100px;
 }
 
 .title{
-font-size:26px;
+font-size:28px;
 }
 
 .sub{
-font-size:18px;
+font-size:20px;
 }
 
 .bar{
@@ -110,7 +116,7 @@ height:18px;
 }
 }
 
-/* urgency states */
+/* STATES */
 .amber{ color:#FFB000; }
 .red{ color:#ff3b3b; }
 .pulse{ animation:pulse 1s infinite; }
@@ -128,7 +134,7 @@ background:black;
 display:flex;
 justify-content:center;
 align-items:center;
-font-size:60px;
+font-size:64px;
 font-weight:900;
 color:#FFD200;
 letter-spacing:4px;
@@ -139,7 +145,7 @@ letter-spacing:4px;
 <body>
 
 <div class="wrap">
-<div class="card" id="card">
+<div class="card">
 
 <div class="title" id="title">BUILD MOMENTUM</div>
 <div class="sub" id="sub">Closes 17:00 (SA)</div>
@@ -204,11 +210,11 @@ const start=new Date(cutoff.getFullYear(), cutoff.getMonth(),1);
 const pct=((now-start)/(cutoff-start))*100;
 fill.style.width=pct+"%";
 
-/* reset styles */
+/* RESET */
 timer.classList.remove("amber","red","pulse");
 fill.style.background="#FFD200";
 
-/* AMBER: 4 days before */
+/* AMBER: 4 DAYS BEFORE */
 if(d <= 4 && d > 0){
 timer.classList.add("amber");
 fill.style.background="#FFB000";
@@ -227,7 +233,7 @@ fill.style.background="#FFB000";
 }
 }
 
-/* dynamic text */
+/* MESSAGES */
 let title=document.getElementById("title");
 let sub=document.getElementById("sub");
 
@@ -237,7 +243,7 @@ sub.innerHTML="Set the pace. Own the month.";
 }
 else if(d >= 8){
 title.innerHTML="STAY ON TARGET";
-sub.innerHTML="Consistency wins. Keep pushing.";
+sub.innerHTML="Consistency wins.";
 }
 else if(d >= 4){
 title.innerHTML="PUSH THE CALLS";
