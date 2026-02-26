@@ -8,10 +8,27 @@ html,body{
 margin:0;
 height:100%;
 font-family:"Proxima Nova", Arial, sans-serif;
-background:url("/month-end-countdown/background.jpg") no-repeat center center fixed;
-background-size:contain;
+background:url("/month-end-countdown/background-mobile.jpg") no-repeat center center fixed;
+background-size:cover;
 background-color:black;
 overflow:hidden;
+}
+
+/* TV background */
+@media (min-width: 900px){
+body{
+background:url("/month-end-countdown/background-tv.jpg") no-repeat center center fixed;
+background-size:cover;
+}
+}
+
+/* smoky overlay */
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:rgba(15,15,15,0.55);
+pointer-events:none;
 }
 
 .wrap{
@@ -22,7 +39,7 @@ align-items:center;
 }
 
 .card{
-background:rgba(0,0,0,0.65);
+background:rgba(0,0,0,0.45);
 padding:28px;
 border-radius:22px;
 color:white;
@@ -68,22 +85,39 @@ transition:width .6s linear;
 box-shadow:0 0 12px #FFD200;
 }
 
-.urgent .fill{
-background:#ff3b3b;
-box-shadow:0 0 20px #ff3b3b;
+/* TV scaling */
+@media (min-width: 900px){
+
+.card{
+max-width:700px;
+padding:50px;
 }
 
-.urgent .time{
-color:#ff3b3b;
+.time{
+font-size:90px;
 }
 
-.pulse{
-animation:pulse 1s infinite;
+.title{
+font-size:26px;
 }
+
+.sub{
+font-size:18px;
+}
+
+.bar{
+height:18px;
+}
+}
+
+/* urgency states */
+.amber{ color:#FFB000; }
+.red{ color:#ff3b3b; }
+.pulse{ animation:pulse 1s infinite; }
 
 @keyframes pulse{
 0%{transform:scale(1);}
-50%{transform:scale(1.06);}
+50%{transform:scale(1.05);}
 100%{transform:scale(1);}
 }
 
@@ -94,11 +128,10 @@ background:black;
 display:flex;
 justify-content:center;
 align-items:center;
-font-size:48px;
+font-size:60px;
 font-weight:900;
 color:#FFD200;
-z-index:999;
-letter-spacing:3px;
+letter-spacing:4px;
 }
 </style>
 </head>
@@ -109,7 +142,7 @@ letter-spacing:3px;
 <div class="card" id="card">
 
 <div class="title" id="title">BUILD MOMENTUM</div>
-<div class="sub" id="sub">Closes Friday 17:00 (SA)</div>
+<div class="sub" id="sub">Closes 17:00 (SA)</div>
 
 <div class="time" id="t"></div>
 
@@ -125,11 +158,12 @@ function saNow(){
 return new Date(new Date().toLocaleString("en-US",{timeZone:"Africa/Johannesburg"}));
 }
 
-function lastFriday(year,month){
+function lastBusinessDay(year, month){
 let d = new Date(year, month+1, 0);
-while(d.getDay() !== 5){
-d.setDate(d.getDate()-1);
-}
+
+if(d.getDay() === 6){ d.setDate(d.getDate()-1); }
+if(d.getDay() === 0){ d.setDate(d.getDate()-2); }
+
 d.setHours(17,0,0,0);
 return d;
 }
@@ -137,12 +171,15 @@ return d;
 function run(){
 
 const now = saNow();
-const year = now.getFullYear();
-const month = now.getMonth();
+let year = now.getFullYear();
+let month = now.getMonth();
 
-let cutoff = lastFriday(year,month);
+let cutoff = lastBusinessDay(year, month);
+
 if(now > cutoff){
-cutoff = lastFriday(year,month+1);
+month++;
+if(month > 11){ month=0; year++; }
+cutoff = lastBusinessDay(year, month);
 }
 
 const diff = cutoff - now;
@@ -158,18 +195,42 @@ const h=Math.floor(diff/3600000)%24;
 const m=Math.floor(diff/60000)%60;
 const s=Math.floor(diff/1000)%60;
 
-document.getElementById("t").innerHTML =
-`${d}d ${h}h ${m}m ${s}s`;
+const timer=document.getElementById("t");
+const fill=document.getElementById("f");
 
-const start=new Date(cutoff.getFullYear(),cutoff.getMonth(),1);
+timer.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
+
+const start=new Date(cutoff.getFullYear(), cutoff.getMonth(),1);
 const pct=((now-start)/(cutoff-start))*100;
-document.getElementById("f").style.width=pct+"%";
+fill.style.width=pct+"%";
 
+/* reset styles */
+timer.classList.remove("amber","red","pulse");
+fill.style.background="#FFD200";
+
+/* AMBER: 4 days before */
+if(d <= 4 && d > 0){
+timer.classList.add("amber");
+fill.style.background="#FFB000";
+}
+
+/* DEADLINE DAY */
+if(d === 0){
+
+if(now.getHours() >= 14){
+timer.classList.add("red","pulse");
+fill.style.background="#ff3b3b";
+}
+else{
+timer.classList.add("amber");
+fill.style.background="#FFB000";
+}
+}
+
+/* dynamic text */
 let title=document.getElementById("title");
 let sub=document.getElementById("sub");
-let card=document.getElementById("card");
 
-// Dynamic performance messaging
 if(d >= 15){
 title.innerHTML="BUILD MOMENTUM";
 sub.innerHTML="Set the pace. Own the month.";
@@ -180,18 +241,15 @@ sub.innerHTML="Consistency wins. Keep pushing.";
 }
 else if(d >= 4){
 title.innerHTML="PUSH THE CALLS";
-sub.innerHTML="Tighten deals. Increase pressure.";
+sub.innerHTML="Dial. Connect. Convert.";
 }
 else if(d >= 1){
 title.innerHTML="FINAL STRETCH";
-sub.innerHTML="Every deal matters now.";
-card.classList.add("urgent");
+sub.innerHTML="Every deal matters.";
 }
 else{
 title.innerHTML="LAST HOURS";
 sub.innerHTML="Close everything possible.";
-card.classList.add("urgent");
-document.getElementById("t").classList.add("pulse");
 }
 }
 
