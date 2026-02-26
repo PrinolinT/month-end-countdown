@@ -12,22 +12,25 @@ background:black;
 overflow:hidden;
 }
 
-/* BACKGROUND IMAGE */
-.bg{
-position:fixed;
-inset:0;
-width:100%;
-height:100%;
-object-fit:cover;
-z-index:-2;
+/* DEFAULT = MOBILE */
+body{
+background:url("background-mobile.jpg") no-repeat center center fixed;
+background-size:cover;
 }
 
-/* DARK OVERLAY */
+/* TV SCREEN */
+@media (min-width:900px){
+body{
+background:url("background-tv.jpg") no-repeat center center fixed;
+background-size:cover;
+}
+}
+
+/* smoky overlay */
 .overlay{
 position:fixed;
 inset:0;
 background:rgba(15,15,15,0.45);
-z-index:-1;
 }
 
 .wrap{
@@ -100,9 +103,6 @@ color:#FFD200;
 </head>
 
 <body>
-
-<!-- BACKGROUND IMAGE -->
-<img src="background-tv.jpg" class="bg">
 
 <div class="overlay"></div>
 
