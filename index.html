@@ -8,25 +8,12 @@ html,body{
 margin:0;
 height:100%;
 font-family:Arial, sans-serif;
-background:black;
 overflow:hidden;
-}
-
-/* DEFAULT = MOBILE */
-body{
-background:url("background-mobile.jpg") no-repeat center center fixed;
-background-size:cover;
-}
-
-/* TV SCREEN */
-@media (min-width:900px){
-body{
 background:url("background-tv.jpg") no-repeat center center fixed;
 background-size:cover;
 }
-}
 
-/* smoky overlay */
+/* Smoky overlay */
 .overlay{
 position:fixed;
 inset:0;
@@ -49,11 +36,27 @@ text-align:center;
 width:85%;
 max-width:380px;
 backdrop-filter: blur(8px);
+transition:all .3s ease;
 }
 
-.title{font-size:14px;opacity:.85;}
-.sub{font-size:12px;opacity:.7;margin-bottom:10px;}
-.time{font-size:44px;font-weight:800;margin:14px 0;}
+.title{
+font-size:14px;
+opacity:.85;
+letter-spacing:2px;
+}
+
+.sub{
+font-size:12px;
+opacity:.75;
+margin-bottom:10px;
+}
+
+.time{
+font-size:44px;
+font-weight:800;
+margin:14px 0;
+transition:all .2s ease;
+}
 
 .bar{
 height:12px;
@@ -67,9 +70,10 @@ height:100%;
 width:0%;
 background:#FFD200;
 transition:width .6s linear;
+box-shadow:0 0 12px #FFD200;
 }
 
-/* TV SIZE */
+/* TV scaling */
 @media (min-width:900px){
 .card{max-width:720px;padding:60px;}
 .time{font-size:100px;}
@@ -84,7 +88,7 @@ transition:width .6s linear;
 
 @keyframes pulse{
 0%{transform:scale(1);}
-50%{transform:scale(1.05);}
+50%{transform:scale(1.06);}
 100%{transform:scale(1);}
 }
 
@@ -95,9 +99,12 @@ background:black;
 display:flex;
 justify-content:center;
 align-items:center;
+flex-direction:column;
 font-size:64px;
 font-weight:900;
 color:#FFD200;
+letter-spacing:4px;
+text-align:center;
 }
 </style>
 </head>
@@ -109,8 +116,8 @@ color:#FFD200;
 <div class="wrap">
 <div class="card">
 
-<div class="title" id="title">BUILD MOMENTUM</div>
-<div class="sub" id="sub">Closes 17:00 (SA)</div>
+<div class="title" id="title">OWN THE MONTH</div>
+<div class="sub" id="sub">Start strong. Control the pace.</div>
 
 <div class="time" id="t"></div>
 
@@ -151,7 +158,8 @@ cutoff = lastBusinessDay(year, month);
 const diff = cutoff - now;
 
 if(diff<=0){
-document.body.innerHTML='<div class="closedScreen">SALES CLOSED</div>';
+document.body.innerHTML=
+'<div class="closedScreen">SALES CLOSED<div style="font-size:22px;font-weight:400;margin-top:10px;">Strong finish.</div></div>';
 return;
 }
 
@@ -162,28 +170,70 @@ const s=Math.floor(diff/1000)%60;
 
 const timer=document.getElementById("t");
 const fill=document.getElementById("f");
+const title=document.getElementById("title");
+const sub=document.getElementById("sub");
 
-timer.innerHTML=`${d}d ${h}h ${m}m ${s}s`;
+timer.classList.remove("amber","red","pulse");
+fill.style.background="#FFD200";
+timer.style.fontSize="";
 
 const start=new Date(cutoff.getFullYear(), cutoff.getMonth(),1);
 const pct=((now-start)/(cutoff-start))*100;
 fill.style.width=pct+"%";
 
-timer.classList.remove("amber","red","pulse");
-fill.style.background="#FFD200";
-
-if(d<=4 && d>0){
+/* NORMAL MONTH PHASES */
+if(d >= 15){
+title.innerHTML="OWN THE MONTH";
+sub.innerHTML="Start strong. Control the pace.";
+timer.innerHTML=`${d}d ${h}h ${m}m ${s}s`;
+}
+else if(d >= 8){
+title.innerHTML="MAINTAIN PRESSURE";
+sub.innerHTML="Consistency builds numbers.";
+timer.innerHTML=`${d}d ${h}h ${m}m ${s}s`;
+}
+else if(d >= 4){
+title.innerHTML="HIT THE PHONES";
+sub.innerHTML="Conversations create revenue.";
+timer.innerHTML=`${d}d ${h}h ${m}m ${s}s`;
+timer.classList.add("amber");
+fill.style.background="#FFB000";
+}
+else if(d >= 1){
+title.innerHTML="LOCK IT IN";
+sub.innerHTML="No opportunities left behind.";
+timer.innerHTML=`${d}d ${h}h ${m}m ${s}s`;
 timer.classList.add("amber");
 fill.style.background="#FFB000";
 }
 
-if(d===0){
-if(now.getHours()>=14){
-timer.classList.add("red","pulse");
-fill.style.background="#ff3b3b";
-}else{
+/* FINAL BUSINESS DAY */
+if(d === 0){
+
+timer.innerHTML=`${h}h ${m}m ${s}s`;
 timer.classList.add("amber");
 fill.style.background="#FFB000";
+
+if(now.getHours() < 14){
+title.innerHTML="CLOSE DAY";
+sub.innerHTML="Execute with focus.";
+}
+
+if(now.getHours() >= 14){
+title.innerHTML="FINAL HOURS";
+sub.innerHTML="Lock in every opportunity.";
+timer.classList.remove("amber");
+timer.classList.add("red","pulse");
+fill.style.background="#ff3b3b";
+}
+
+if(now.getHours() >= 16){
+sub.innerHTML="Last hour approaching.";
+}
+
+if(now.getHours() === 16 && now.getMinutes() >= 55){
+sub.innerHTML="Final minutes.";
+timer.style.fontSize="120px";
 }
 }
 }
