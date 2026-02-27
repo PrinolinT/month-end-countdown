@@ -41,13 +41,13 @@ transition:all .3s ease;
 
 .title{
 font-size:14px;
-opacity:.85;
-letter-spacing:2px;
+opacity:.95;
+letter-spacing:1px;
 }
 
 .sub{
 font-size:12px;
-opacity:.75;
+opacity:.85;
 margin-bottom:10px;
 }
 
@@ -77,8 +77,8 @@ box-shadow:0 0 12px #FFD200;
 @media (min-width:900px){
 .card{max-width:720px;padding:60px;}
 .time{font-size:100px;}
-.title{font-size:28px;}
-.sub{font-size:20px;}
+.title{font-size:30px;}
+.sub{font-size:22px;}
 .bar{height:18px;}
 }
 
@@ -88,7 +88,7 @@ box-shadow:0 0 12px #FFD200;
 
 @keyframes pulse{
 0%{transform:scale(1);}
-50%{transform:scale(1.06);}
+50%{transform:scale(1.08);}
 100%{transform:scale(1);}
 }
 
@@ -140,6 +140,11 @@ if(d.getDay()===0)d.setDate(d.getDate()-2);
 d.setHours(17,0,0,0);
 return d;
 }
+
+const monthNames = [
+"January","February","March","April","May","June",
+"July","August","September","October","November","December"
+];
 
 function run(){
 
@@ -214,25 +219,21 @@ timer.innerHTML=`${h}h ${m}m ${s}s`;
 timer.classList.add("amber");
 fill.style.background="#FFB000";
 
-if(now.getHours() < 14){
-title.innerHTML="CLOSE DAY";
-sub.innerHTML="Execute with focus.";
-}
+title.innerHTML="LAST DAY TO MAKE THAT SALE!";
+sub.innerHTML=monthNames[cutoff.getMonth()] + " Month End";
 
 if(now.getHours() >= 14){
-title.innerHTML="FINAL HOURS";
-sub.innerHTML="Lock in every opportunity.";
 timer.classList.remove("amber");
 timer.classList.add("red","pulse");
 fill.style.background="#ff3b3b";
 }
 
 if(now.getHours() >= 16){
-sub.innerHTML="Last hour approaching.";
+sub.innerHTML=monthNames[cutoff.getMonth()] + " Month End – Final Hour";
 }
 
 if(now.getHours() === 16 && now.getMinutes() >= 55){
-sub.innerHTML="Final minutes.";
+sub.innerHTML="Final Minutes – " + monthNames[cutoff.getMonth()] + " Month End";
 timer.style.fontSize="120px";
 }
 }
