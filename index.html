@@ -13,13 +13,9 @@ background:url("background-tv.jpg") no-repeat center center fixed;
 background-size:cover;
 }
 
-/* Smoky overlay */
-.overlay{
-position:fixed;
-inset:0;
-background:rgba(15,15,15,0.45);
-}
+/* Removed full-screen overlay completely */
 
+/* Layout */
 .wrap{
 height:100%;
 display:flex;
@@ -27,8 +23,9 @@ justify-content:center;
 align-items:center;
 }
 
+/* Darkened card for readability */
 .card{
-background:rgba(0,0,0,0.45);
+background:rgba(0,0,0,0.65);
 padding:28px;
 border-radius:22px;
 color:white;
@@ -47,7 +44,7 @@ letter-spacing:1px;
 
 .sub{
 font-size:12px;
-opacity:.85;
+opacity:.9;
 margin-bottom:10px;
 }
 
@@ -110,8 +107,6 @@ text-align:center;
 </head>
 
 <body>
-
-<div class="overlay"></div>
 
 <div class="wrap">
 <div class="card">
